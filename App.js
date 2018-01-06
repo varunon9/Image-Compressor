@@ -10,79 +10,30 @@ import {
     View,
     StyleSheet,
     Image,
-    CameraRoll,
     ScrollView,
-    Dimensions
+    Dimensions,
+    Text
 } from 'react-native';
 
-const FETCH_LIMIT = 20;
+import ToastModule from './native_modules/ToastModule';
+
 const WIDTH = Dimensions.get('window').width;
 
 export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.lastPhotoFetched = undefined; // Using `null` would crash ReactNative CameraRoll on iOS.
-        this.state = {
-            photos: []
-        }
-
-        this.fetchPhotos(FETCH_LIMIT, this.lastPhotoFetched);
-    }
-
-    onPhotosFetchedSuccess(data) {
-        console.log(data);
-        const newPhotos = data.edges.map(asset => asset.node.image);
-
-        this.setState({
-            photos: this.state.photos.concat(newPhotos)
-        });
-
-        if (newPhotos.length) {
-            this.lastPhotoFetched = newPhotos[newPhotos.length - 1].uri;
-        }
-    }
-
-    onPhotosFetchError(err) {
-        // Handle error here
-        console.log(err);
-    }
-
-    fetchPhotos = (count = FETCH_LIMIT, after) => {
-        CameraRoll.getPhotos({
-            first: count,
-            after
-        }).then(this.onPhotosFetchedSuccess.bind(this), this.onPhotosFetchError.bind(this)); 
-    }
-
-    onEndReached() {
-        this.fetchPhotos(FETCH_LIMIT, this.lastPhotoFetched);
+        ToastModule.show('Cool...', ToastModule.SHORT);
     }
 
     render() {
         return (
-            <ScrollView contentContainerStyle={styles.scrollView}>
-                {
-                    this.state.photos.map((photo, index) => {
-                        return (
-                            <Image 
-                                key={index} 
-                                style={{
-                                    width: WIDTH / 3,
-                                    height: WIDTH / 3
-                                }} 
-                                source={{uri: photo.uri}} 
-                            />
-                        );
-                    })
-                }
-            </ScrollView>
+            <Text>Hello world!</Text>
         )
     }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
