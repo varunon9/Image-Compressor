@@ -10,12 +10,15 @@ import {
     View,
     StyleSheet,
     Image,
-    ScrollView,
     Dimensions,
-    Text
+    Text,
+    FlatList
 } from 'react-native';
 
+import {List, ListItem} from 'react-native-elements';
+
 import ToastModule from './native_modules/ToastModule';
+import GalleryModule from './native_modules/GalleryModule';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -23,12 +26,44 @@ export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-        ToastModule.show('Cool...', ToastModule.SHORT);
+        this.state = {
+            photos: []
+        }
+        this.getImagesFromGallery();
+    }
+
+    async getImagesFromGallery() {
+        try {
+            const images = await GalleryModule.getImages();
+            this.setState({
+                photos: images
+            });
+            console.log(images);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     render() {
         return (
-            <Text>Hello world!</Text>
+            <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}>
+                <FlatList
+                    data={this.state.photos}
+                    renderItem={({item}) => (
+                       <View>
+                          <Text>{item.DISPLAY_NAME}</Text>
+                          <Image 
+                              style={{
+                                  width: WIDTH / 3,
+                                  height: WIDTH / 3
+                              }}
+                              source={{uri: 'file:///' + item.DATA}}
+                           />
+                       </View>
+                    )}
+                    keyExtractor={(item, index) => index}
+                />
+            </List>
         )
     }
 }
@@ -38,9 +73,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    scrollView: {
-        flexWrap: 'wrap',
-        flexDirection: 'row'
     }
 });
