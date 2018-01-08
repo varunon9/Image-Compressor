@@ -72,7 +72,8 @@ public class GalleryModule extends ReactContextBaseJavaModule {
                 ContentResolver imageResolver = reactContext.getContentResolver();
                 Uri imageUri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 Cursor imageCursor =
-                        imageResolver.query(imageUri, null, null, null, null);
+                        imageResolver.query(imageUri, null, null, null,
+                                android.provider.MediaStore.Images.Media.DATE_TAKEN + " DESC");
                 if (imageCursor != null && imageCursor.moveToFirst()) {
                     int displayNameColumn =
                             imageCursor.getColumnIndex(
@@ -107,3 +108,30 @@ public class GalleryModule extends ReactContextBaseJavaModule {
         }
     }
 }
+
+/**
+ * (wrapping the native module in a JavaScript module GalleryModule.js)
+ *
+ * import {NativeModules} from 'react-native';
+ * module.exports = NativeModules.GalleryModule;
+ *
+ */
+
+/**
+ * (Using GalleryModule in react-native)
+ *
+ * import GalleryModule from './native_modules/GalleryModule';
+ *
+ * async getImagesFromGallery() {
+ *       try {
+ *           const images = await GalleryModule.getImages();
+ *           this.setState({
+ *               photos: images
+ *           });
+ *           //console.log(images);
+ *       } catch (e) {
+ *           console.error(e);
+ *       }
+ *   }
+ *
+ */
