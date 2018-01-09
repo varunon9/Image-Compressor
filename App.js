@@ -14,7 +14,8 @@ import {
     Text,
     FlatList,
     ToolbarAndroid,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native';
 
 import {List, ListItem, Card} from 'react-native-elements';
@@ -22,6 +23,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import ToastModule from './native_modules/ToastModule';
 import GalleryModule from './native_modules/GalleryModule';
+
+import {Color} from './components/Color';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -53,6 +56,10 @@ export default class App extends React.Component {
         console.log(position);
     }
 
+    onImagePressed() {
+        
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -67,27 +74,27 @@ export default class App extends React.Component {
                     titleColor="white"
                     title="ImageCompressor" />
 
-                <List /*containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}*/ style={{backgroundColor: 'green'}}>
-                    <FlatList 
-                        style={{backgroundColor: 'red', margin: 0}}
-                        data={this.state.photos}
-                        renderItem={({item}) => (
-                            <TouchableOpacity>
-                                <Card
-                                    title={item.DISPLAY_NAME}
-                                    image={{uri: 'file:///' + item.DATA}}
-                                    /*style={styles.card}*/
-                                >
-                                    <Text>
-                                        Size: {parseInt(item.SIZE_IN_BYTES / 1024)} KB &nbsp; | &nbsp;
-                                        {new Date(parseInt(item.DATE_TAKEN)).toLocaleDateString()}
-                                    </Text>
-                                </Card>
-                            </TouchableOpacity>
-                        )}
-                        keyExtractor={(item, index) => index}
-                    />
-                </List>
+                <ScrollView>
+                    <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, marginTop: 0 }}>
+                        <FlatList 
+                            data={this.state.photos}
+                            renderItem={({item}) => (
+                                <TouchableOpacity onPress={this.onImagePressed}>
+                                    <Card
+                                        title={item.DISPLAY_NAME}
+                                        image={{uri: 'file:///' + item.DATA}}
+                                    >
+                                        <Text>
+                                            Size: {parseInt(item.SIZE_IN_BYTES / 1024)} KB &nbsp; | &nbsp;
+                                            {new Date(parseInt(item.DATE_TAKEN)).toLocaleDateString()}
+                                        </Text>
+                                    </Card>
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={(item, index) => index}
+                        />
+                    </List>
+                </ScrollView>
             </View>
         )
     }
@@ -95,18 +102,11 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1/*,
-        justifyContent: 'center',
-        alignItems: 'center'*/,backgroundColor: 'yellow', padding: 0
-    },
-    card: {
-        margin: 0,
-        width: WIDTH / 3,
-        height: WIDTH / 3
+        flex: 1
     },
     toolbar: {
-        backgroundColor: '#3F51B5',
-        height: 56,
+        backgroundColor: Color.primary,
+        height: 56
     }
 });
 
