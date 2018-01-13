@@ -14,7 +14,7 @@ import {
     Text,
     FlatList,
     ToolbarAndroid,
-    TouchableOpacity,
+    TouchableHighlight,
     ScrollView
 } from 'react-native';
 
@@ -56,8 +56,8 @@ export default class App extends React.Component {
         console.log(position);
     }
 
-    onImagePressed() {
-        
+    onImagePressed(image) {
+        console.log('image clicked', image);
     }
 
     render() {
@@ -79,17 +79,19 @@ export default class App extends React.Component {
                         <FlatList 
                             data={this.state.photos}
                             renderItem={({item}) => (
-                                <TouchableOpacity onPress={this.onImagePressed}>
-                                    <Card
-                                        title={item.DISPLAY_NAME}
-                                        image={{uri: 'file:///' + item.DATA}}
-                                    >
-                                        <Text>
-                                            Size: {parseInt(item.SIZE_IN_BYTES / 1024)} KB &nbsp; | &nbsp;
-                                            {new Date(parseInt(item.DATE_TAKEN)).toLocaleDateString()}
-                                        </Text>
-                                    </Card>
-                                </TouchableOpacity>
+                                <TouchableHighlight onPress={() => this.onImagePressed(item)}>
+                                    <View>
+                                        <Card 
+                                            title={item.DISPLAY_NAME}
+                                            image={{uri: 'file:///' + item.DATA}}
+                                        >
+                                            <Text>
+                                                Size: {parseInt(item.SIZE_IN_BYTES / 1024)} KB &nbsp; | &nbsp;
+                                                {new Date(parseInt(item.DATE_TAKEN)).toLocaleDateString()}
+                                            </Text>
+                                        </Card>
+                                    </View>
+                                </TouchableHighlight>
                             )}
                             keyExtractor={(item, index) => index}
                         />
