@@ -14,7 +14,7 @@ import {
     Text,
     FlatList,
     ToolbarAndroid,
-    TouchableHighlight,
+    TouchableWithoutFeedback,
     ScrollView
 } from 'react-native';
 
@@ -36,15 +36,22 @@ export default class App extends React.Component {
             photos: []
         }
         this.getImagesFromGallery();
+        this.selectedPhotos = [];
     }
 
     async getImagesFromGallery() {
         try {
             const images = await GalleryModule.getImages();
+
+            // setting id and isSelected property
+            for (let i = 0; i < images.length; i++) {
+                images[i].id = i; // id is starting from 0 
+                images[i].isSelected = false;
+            }
             this.setState({
                 photos: images
             });
-            console.log(images);
+            //console.log(images);
         } catch (e) {
             console.error(e);
         }
@@ -53,11 +60,28 @@ export default class App extends React.Component {
     onActionSelected(position) {
         if (position === 0) { // index of 'Settings'
         }
-        console.log(position);
+        //console.log(position);
     }
 
-    onImagePressed(image) {
-        console.log('image clicked', image);
+    onImagePressed(id) {
+        let images = this.state.photos.slice(); // copy array
+        images[id].isSelected = !images[id].isSelected;
+        this.setState({
+            photos: images
+        });
+
+        // add or remove this image from selected photos
+        if (images[id].isSelected) {
+            this.selectedPhotos.push(images[id]);
+        } else {
+            for (let i = 0; i < this.selectedPhotos.length; i++) {
+                if (this.selectedPhotos[i].id == id) { // remove this pic
+                    this.selectedPhotos.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        //console.log(this.selectedPhotos);
     }
 
     render() {
@@ -79,8 +103,8 @@ export default class App extends React.Component {
                         <FlatList 
                             data={this.state.photos}
                             renderItem={({item}) => (
-                                <TouchableHighlight onPress={() => this.onImagePressed(item)}>
-                                    <View>
+                                <TouchableWithoutFeedback onPress={() => this.onImagePressed(item.id)}>
+                                    <View style={item.isSelected ? styles.cardIsSelected : styles.cardIsNotSelected}>
                                         <Card 
                                             title={item.DISPLAY_NAME}
                                             image={{uri: 'file:///' + item.DATA}}
@@ -91,9 +115,9 @@ export default class App extends React.Component {
                                             </Text>
                                         </Card>
                                     </View>
-                                </TouchableHighlight>
+                                </TouchableWithoutFeedback>
                             )}
-                            keyExtractor={(item, index) => index}
+                            keyExtractor={(item, index) => item.id}
                         />
                     </List>
                 </ScrollView>
@@ -109,6 +133,12 @@ const styles = StyleSheet.create({
     toolbar: {
         backgroundColor: Color.primary,
         height: 56
+    },
+    cardIsSelected: {
+        opacity: .8
+    },
+    cardIsNotSelected: {
+        opacity: 1
     }
 });
 
