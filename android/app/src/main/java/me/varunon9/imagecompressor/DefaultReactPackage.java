@@ -1,4 +1,4 @@
-package com.imagecompressor;
+package me.varunon9.imagecompressor;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
@@ -20,6 +20,7 @@ public class DefaultReactPackage implements ReactPackage {
 
         modules.add(new ToastModule(reactContext));
         modules.add(new GalleryModule(reactContext));
+        modules.add(new ImageCompressorModule(reactContext));
 
         return modules;
     }

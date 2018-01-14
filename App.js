@@ -23,6 +23,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import ToastModule from './native_modules/ToastModule';
 import GalleryModule from './native_modules/GalleryModule';
+import ImageCompressorModule from './native_modules/ImageCompressorModule';
 
 import {Color} from './components/Color';
 
@@ -33,10 +34,14 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            photos: []
+            photos: [],
+            areImagesSelected: false
         }
         this.getImagesFromGallery();
         this.selectedPhotos = [];
+
+        this.onActionSelected = this.onActionSelected.bind(this);
+        this.compressImages = this.compressImages.bind(this);
     }
 
     async getImagesFromGallery() {
@@ -57,8 +62,20 @@ export default class App extends React.Component {
         }
     }
 
+    async compressImages() {
+        try {
+            const compressedImages = await ImageCompressorModule.compressImages(this.selectedPhotos);
+            console.log(compressedImages);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     onActionSelected(position) {
-        if (position === 0) { // index of 'Settings'
+        if (position === 0) { // index of menu/compress
+            if (this.state.areImagesSelected) {
+                this.compressImages();
+            }
         }
         //console.log(position);
     }
@@ -82,15 +99,26 @@ export default class App extends React.Component {
             }
         }
         //console.log(this.selectedPhotos);
+        let areImagesSelected = true;
+        if (this.selectedPhotos.length == 0) {
+            areImagesSelected = false;
+        }
+        this.setState({
+            areImagesSelected: areImagesSelected
+        });
     }
 
     render() {
+        const menuIcon = require('./images/menu.png');
+        const compressIcon = require('./images/compress.png');
         return (
             <View style={styles.container}>
-                <Ionicons.ToolbarAndroid
+                <ToolbarAndroid
                     actions={[
                         {
-                            title: 'Menu', icon: require('./images/menu_icon.png'), show: 'always'
+                            title: this.state.areImagesSelected ? 'Compress' : 'Menu', 
+                            icon: this.state.areImagesSelected ? compressIcon : menuIcon, 
+                            show: 'always'
                         }
                     ]}
                     onActionSelected={this.onActionSelected}
@@ -135,21 +163,11 @@ const styles = StyleSheet.create({
         height: 56
     },
     cardIsSelected: {
+        backgroundColor: Color.primaryLight,
         opacity: .8
     },
     cardIsNotSelected: {
+        backgroundColor: 'white',
         opacity: 1
     }
 });
-
-/*
-<resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="transparent">#00000000</color>
-    <color name="theme_color">#4FC3F7</color>
-    <color name="theme_color_dark">#3f8eb1</color>
-    <color name="colorPrimaryLight">#FF586CDC</color>
-</resources>
-*/

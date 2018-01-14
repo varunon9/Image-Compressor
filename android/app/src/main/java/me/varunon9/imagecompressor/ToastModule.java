@@ -1,4 +1,4 @@
-package com.imagecompressor;
+package me.varunon9.imagecompressor;
 
 import android.widget.Toast;
 
