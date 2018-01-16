@@ -34,7 +34,7 @@ public class ImageCompressorModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void compressImages(final Promise promise, ReadableArray imagesArray) {
+    public void compressImages(ReadableArray imagesArray, final Promise promise) {
         new CompressImagesTask(promise).execute(imagesArray);
     }
 

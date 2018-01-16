@@ -64,7 +64,9 @@ export default class App extends React.Component {
 
     async compressImages() {
         try {
-            const compressedImages = await ImageCompressorModule.compressImages(this.selectedPhotos);
+            const selectedPhotos = this.selectedPhotos.slice(); // copying array
+            const compressedImages = 
+                    await ImageCompressorModule.compressImages(selectedPhotos); 
             console.log(compressedImages);
         } catch (e) {
             console.error(e);
